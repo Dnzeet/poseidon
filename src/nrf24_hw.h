@@ -1,16 +1,16 @@
 /*
  * nrf24_hw — nRF24L01+ driver for the combo RF/IR hat (Cardputer ADV).
  *
- * Hat pinout (shared SPI with SD):
- *   SCK=40  MISO=39  MOSI=14  CS=4  CE=3
+ * Hat pinout (SCK/MISO/MOSI shared with SD; CS/CE dedicated to nRF24):
+ *   SCK=40  MISO=39  MOSI=14  CS=6  CE=5
  */
 #pragma once
 
 #include <Arduino.h>
 #include <RF24.h>
 
-#define NRF24_CS  4
-#define NRF24_CE  3
+#define NRF24_CS  6
+#define NRF24_CE  5
 
 bool  nrf24_begin(void);
 void  nrf24_end(void);

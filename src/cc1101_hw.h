@@ -1,15 +1,19 @@
 /*
  * cc1101_hw — CC1101 driver for the combo RF/IR hat (Cardputer ADV).
  *
- * Hat pinout (shared SPI with SD):
- *   SCK=40  MISO=39  MOSI=14  CS=15  GDO0=13
+ * Hat pinout (SCK/MISO/MOSI shared with SD; CS/GDO0 dedicated to CC1101):
+ *   SCK=40  MISO=39  MOSI=14  CS=4  GDO0=3
+ *
+ * NOTE: previously CS=15/GDO0=13, which collided with the GPS UART
+ * (RX=15, TX=13) — see cc1101_hw.cpp. Moving to 4/3 (freed up by
+ * moving nRF24 off those pins) resolves that clash for good.
  */
 #pragma once
 
 #include <Arduino.h>
 
-#define CC1101_CS   15
-#define CC1101_GDO0 13
+#define CC1101_CS   4
+#define CC1101_GDO0 3
 
 bool cc1101_begin(float freq_mhz = 433.92f);
 void cc1101_end(void);

@@ -12,19 +12,20 @@ static bool s_up = false;
 
 void cc1101_park_others(void)
 {
-    /* On the combo hat CC1101 CS=15 and GDO0=13, which are exactly the GPS
-     * UART pins (RX=15, TX=13). A running GPS poller fights us for them —
-     * symptoms range from "CS never asserts" to "garbage bytes on SPI" — so
-     * tear GPS down first. (POS-AUDIT-244 / rf-015: only if actually up;
-     * unconditional teardown momentarily backdrove the GPS TX into us.) */
+    /* CC1101 CS/GDO0 used to sit on 15/13, exactly the GPS UART pins
+     * (RX=15, TX=13) — a running GPS poller would fight us for them,
+     * with symptoms from "CS never asserts" to "garbage bytes on SPI".
+     * Now on 4/3, that pin clash no longer applies, but we still tear
+     * GPS down here as a conservative default. (POS-AUDIT-244 / rf-015:
+     * only if actually up; unconditional teardown momentarily backdrove
+     * the GPS TX into us.) Safe to drop this if you want GPS to keep
+     * running alongside CC1101 — just remove the two lines below. */
     if (gps_is_up()) gps_end();
 
     /* Hold every other device on the shared HSPI bus deselected so CC1101
      * owns it. Driven from the canonical macros (SD_CS, NRF24_CS) so this
-     * can't drift out of sync with the hat pinout — the old hard-coded 6/5
-     * were the Hydra nRF24-CS / LoRa-NSS pins and left the hat's real nRF24
-     * CS (4) un-parked (latent MISO contention). CC1101's own CS/GDO0 are
-     * set up in cc1101_begin. */
+     * can't drift out of sync with the hat pinout. CC1101's own CS/GDO0
+     * are set up in cc1101_begin. */
     pinMode(SD_CS,    OUTPUT); digitalWrite(SD_CS,    HIGH);
     pinMode(NRF24_CS, OUTPUT); digitalWrite(NRF24_CS, HIGH);
 }

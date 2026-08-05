@@ -12,11 +12,11 @@ static bool  s_up    = false;
 void nrf24_park_others(void)
 {
     /* Park every other CS on the shared SPI bus HIGH so only the nRF24
-     * answers. SD CS=12; CC1101 CS is CC1101_CS (combo hat: 15). Use the
-     * macro so this can't drift out of sync with the hat pinout again — the
-     * old hard-coded 13 was the Hydra CC1101 CS and left the hat's real
-     * CC1101 CS (15) un-parked, so CC1101 contended on MISO and the nRF24
-     * probe read garbage ("chip not detected"). */
+     * answers. SD CS=12; CC1101 CS is CC1101_CS (now 4). Use the macro so
+     * this can't drift out of sync with the hat pinout again — a stale
+     * hard-coded CS here previously left CC1101's real CS un-parked, so
+     * CC1101 contended on MISO and the nRF24 probe read garbage
+     * ("chip not detected"). */
     pinMode(SD_CS,     OUTPUT); digitalWrite(SD_CS,     HIGH);
     pinMode(CC1101_CS, OUTPUT); digitalWrite(CC1101_CS, HIGH);
 }
@@ -67,7 +67,7 @@ void nrf24_end(void)
     s_up = false;
 
     /* Release CE/CS back to high-Z so the pins don't fight the next
-     * hat (LoRa BUSY=G6 / DIO1=G4 overlap these on CAP-LoRa1262). */
+     * hat (LoRa CS=G5 / BUSY=G6 overlap these on CAP-LoRa1262). */
     pinMode(NRF24_CS, INPUT);
     pinMode(NRF24_CE, INPUT);
 }
